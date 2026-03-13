@@ -362,8 +362,9 @@ local function downloadFile(path, func)
 	return (func or readfile)(path)
 end
 
+local ignore = table.find({'Xeno', 'Solara'}, ({identifyexecutor()})[1])
 getcustomasset = assetfunction and function(path)
-	return downloadFile(path, assetfunction)
+	return ignore and table.find({'catrewrite/assets/new/mascot.png', 'catrewrite/assets/new/guiv4.png', 'catrewrite/assets/new/guivape.png', 'catrewrite/assets/new/textv4.png', 'catrewrite/assets/new/textvape.png'}, path) and downloadFile(path, assetfunction) or getcustomassets[path] or ''
 end or function(path)
 	return getcustomassets[path] or ''
 end

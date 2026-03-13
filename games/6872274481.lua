@@ -1020,7 +1020,7 @@ run(function()
 			return pos, cost, path
 		end
 	end
-	
+	getgenv().calculatePath = calculatePath
 
 	bedwars.placeBlock = function(pos, item)
 		if getItem(item) then
@@ -1182,16 +1182,7 @@ run(function()
 	end
 
 	local storeChanged = bedwars.Store.changed:connect(updateStore)
-	if not canDebug then
-		vape:Clean(task.spawn(function()
-			repeat
-				updateStore(bedwars.Store:getState(), {})
-				task.wait()
-			until false
-		end))
-	else
-		updateStore(bedwars.Store:getState(), {})
-	end
+	updateStore(bedwars.Store:getState(), {})
 
 	for _, event in {'MatchEndEvent', 'EntityDeathEvent', 'BedwarsBedBreak', 'BalloonPopped', 'AngelProgress', 'GrapplingHookFunctions'} do
 		if not vape.Connections then return end

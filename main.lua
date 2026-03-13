@@ -1,6 +1,5 @@
 -- i love whitepine! w whitepine!
 local license = ...
-repeat task.wait() until game:IsLoaded()
 if shared.vape then shared.vape:Uninject() end
 
 local vape
@@ -72,7 +71,7 @@ local function finishLoading()
 				commit = commit and #commit == 40 and commit or 'main'
 				return commit
 			end)
-			if suc and commit then
+			if suc and commit and commit ~= 'main' then
 				if readfile('catrewrite/profiles/commit.txt') ~= commit then
 					vape:CreateNotification('Cat', 'Cat Vape has updated! Please re-execute the script to get the changes', 5, 'info')
 				end
@@ -137,10 +136,6 @@ local function finishLoading()
 				end)
 			end
 		end
-
-		pcall(function()
-			vape:Remove('Auto Dodge')
-		end)
 
 		if vape.Categories.Main.Options['GUI bind indicator'].Enabled then
 			task.wait(0.5)
