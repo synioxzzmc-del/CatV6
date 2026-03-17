@@ -975,6 +975,10 @@ run(function()
 		Source: https://stackoverflow.com/questions/39355587/speeding-up-dijkstras-algorithm-to-solve-a-3d-maze
 	]]
 	local function calculatePath(target, blockpos, findmag, angle)
+		if vape.Libraries.calculatePath then
+			return vape.Libraries.calculatePath(target, blockpos, findmag, angle)
+		end
+
 		local visited, unvisited, distances, air, path = {}, {{0, blockpos}}, {[blockpos] = 0}, {}, {}
 
 		for _ = 1, 10000 do
@@ -1480,6 +1484,7 @@ run(function()
 	
 	vape.Categories.Combat:CreateModule({
 		Name = 'No Click Delay',
+		Disabled = not canDebug,
 		Function = function(callback)
 			if callback then
 				old = bedwars.SwordController.isClickingTooFast
@@ -1876,6 +1881,7 @@ run(function()
     
     FastBreak = vape.Categories.Blatant:CreateModule({
         Name = 'Fast Break',
+		Disabled = not canDebug,
 		Tags = getModTags(nil, isNewUser('Fast Break')),
         Function = function(callback)
             if callback then
@@ -2170,6 +2176,7 @@ run(function()
 		Default = true
 	})
 end)
+vape.Categories.Blatant:CreateModule({Name = 'Infinite Fly', Function = function() end})
 	
 run(function()
 	local Mode
@@ -2397,7 +2404,8 @@ run(function() --> by max
 		if legitswitch then
 			local hotbar = getHotbar(item.tool)
 			if hotbar then
-				switched = hotbarSwitch(hotbar)
+				switched = switchItem(item.tool, 0.05)
+				hotbarSwitch(hotbar)
 			end
 		else
 			switched = switchItem(item.tool, 0.05)
@@ -2567,7 +2575,7 @@ run(function() --> by max
 									getgenv().Attacking = true
 									store.KillauraTarget = v
 									if not Swing.Enabled and AnimDelay < tick() and not LegitAura.Enabled then
-										AnimDelay = tick() + math.max(ChargeTime.Value, (meta.displayName:find('Summoner Claw') and 0.65 or 0.11))
+										AnimDelay = tick() + math.max(ChargeTime.Value, 0.11)
 										lastSwang = tick()
 										if canDebug or (not Limit.Enabled or store.hand.toolType == 'sword') then
 											if meta.displayName:find('Summoner Claw') then
@@ -2605,7 +2613,7 @@ run(function() --> by max
 									local targetpos = actualRoot.Position + (calculatePosition(selfpos, actualRoot) or Vector3.zero)
 
 									local dir = CFrame.lookAt(selfpos, targetpos).LookVector
-									local pos = selfpos + dir * math.max(delta.Magnitude - (meta.displayName:find('Summoner Claw') and 19.399 or 12), 0)
+									local pos = selfpos + dir * math.max(delta.Magnitude - 14.4, 0)
 									swingCooldown = tick()
 									bedwars.SwordController.lastAttack = workspace:GetServerTimeNow()
 									store.attackReach = (delta.Magnitude * 100) // 1 / 100
@@ -2658,6 +2666,10 @@ run(function() --> by max
 												end
 											end)
 										end
+									end
+
+									if Mode.Value ~= 'Multi' then
+										break
 									end
 								end
 							end
@@ -5768,6 +5780,7 @@ run(function()
 	AutoShoot = vape.Categories.Utility:CreateModule({
 		Name = 'Auto Shoot',
 		Tags = {'updated'},
+		Disabled = not canDebug,
 		Tooltip = 'Automatically swaps to another projectile source while swinging ur sword',
 		Function = function(call)
 			if call then
@@ -5864,6 +5877,7 @@ run(function()
 	
 	AutoToxic = vape.Categories.Utility:CreateModule({
 		Name = 'Auto Toxic',
+		Disabled = not canDebug,
 		Function = function(callback)
 			if callback then
 				AutoToxic:Clean(vapeEvents.BedwarsBedBreak.Event:Connect(function(bedTable)
@@ -6605,30 +6619,6 @@ run(function()
 end)
 
 run(function()
-	vape.Categories.World:CreateModule({
-		Name = 'Anti-AFK',
-		Function = function(callback)
-			if callback then
-				for _, v in getconnections(lplr.Idled) do
-					v:Disconnect()
-				end
-	
-				for _, v in getconnections(runService.Heartbeat) do
-					if type(v.Function) == 'function' and table.find(debug.getconstants(v.Function), remotes.AfkStatus) then
-						v:Disconnect()
-					end
-				end
-	
-				bedwars.Client:Get(remotes.AfkStatus):SendToServer({
-					afk = false
-				})
-			end
-		end,
-		Tooltip = 'Lets you stay ingame without getting kicked'
-	})
-end)
-
-run(function()
 	local FastPlace
 	local CPS
 
@@ -6638,6 +6628,7 @@ run(function()
 		Name = 'Fast Place',
 		Alias = {'CPS', 'Block'},
 		Tooltip = 'Changes place delay',
+		Disabled = not canDebug,
 		Function = function(call)
 			bedwars.SharedConstants.BLOCK_PLACE_CPS = call and CPS.Value or old
 		end
@@ -9871,6 +9862,7 @@ run(function()
 	
 	Viewmodel = vape.Categories.Legit:CreateModule({
 		Name = 'Viewmodel',
+		Alias = {'nobob', 'no bob'},
 		Function = function(callback)
 			local viewmodel = gameCamera:FindFirstChild('Viewmodel')
 			if callback then

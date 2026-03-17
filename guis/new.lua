@@ -249,6 +249,7 @@ local function addTooltip(gui, text)
 			((y + 11) - (tooltip.Size.Y.Offset / 2)) / scale.Scale
 		)
 		tooltip.Visible = toolblur.Visible
+		tooltip.ZIndex = 101
 	end
 
 	gui.MouseEnter:Connect(function(x, y)
@@ -364,7 +365,7 @@ end
 
 local ignore = table.find({'Xeno', 'Solara'}, ({identifyexecutor()})[1])
 getcustomasset = assetfunction and function(path)
-	return ignore and table.find({'catrewrite/assets/new/mascot.png', 'catrewrite/assets/new/guiv4.png', 'catrewrite/assets/new/guivape.png', 'catrewrite/assets/new/textv4.png', 'catrewrite/assets/new/textvape.png'}, path) and downloadFile(path, assetfunction) or getcustomassets[path] or ''
+	return (not ignore or table.find({'catrewrite/assets/new/mascot.png', 'catrewrite/assets/new/guiv4.png', 'catrewrite/assets/new/guivape.png', 'catrewrite/assets/new/textv4.png', 'catrewrite/assets/new/textvape.png'}, path)) and assetfunction(path) or getcustomassets[path] or ''
 end or function(path)
 	return getcustomassets[path] or ''
 end
@@ -3752,6 +3753,10 @@ function mainapi:CreateCategory(categorysettings)
 			Category = categorysettings.Name
 		}
 
+		local disabled = modulesettings.Disabled or false
+		if disabled then
+			modulesettings.Tooltip = 'This module is disabled for ur executor'
+		end
 		local hovered = false
 		local modulebutton = Instance.new('TextButton')
 		modulebutton.Name = modulesettings.Name
@@ -3765,6 +3770,15 @@ function mainapi:CreateCategory(categorysettings)
 		modulebutton.TextSize = 14
 		modulebutton.FontFace = uipallet.Font
 		modulebutton.Parent = children
+
+		if disabled then
+			local newind = modulebutton:Clone()
+			newind.Text = ''
+			newind.ZIndex = 100
+			newind.BackgroundColor3 = Color3.new()
+			newind.BackgroundTransparency = 0.5
+			newind.Parent = modulebutton
+		end
 
 		local indicatorholder = Instance.new('Frame')
 		indicatorholder.Parent = modulebutton
@@ -3948,6 +3962,7 @@ function mainapi:CreateCategory(categorysettings)
 		end
 
 		function moduleapi:Toggle(multiple)
+			if disabled then return end
 			if mainapi.ThreadFix then
 				setthreadidentity(8)
 			end
@@ -4034,9 +4049,11 @@ function mainapi:CreateCategory(categorysettings)
 			end
 			bind.Visible = #moduleapi.Bind > 0 or hovered or modulechildren.Visible
 		end)
-		modulebutton.MouseButton1Click:Connect(function()
-			moduleapi:Toggle()
-		end)
+		if not disabled then
+			modulebutton.MouseButton1Click:Connect(function()
+				moduleapi:Toggle()
+			end)
+		end
 		modulebutton.MouseButton2Click:Connect(function()
 			modulechildren.Visible = not modulechildren.Visible
 		end)

@@ -1,6 +1,6 @@
 repeat task.wait() until game:IsLoaded()
 local Args = ...
-local commit = Args.Commit
+local commit = Args.Commit or 'main'
 shared.VapeDeveloper = shared.VapeDeveloper or Args.Developer
 
 local isfile = isfile or function(file)
@@ -67,13 +67,17 @@ end
 getgenv().used_init = true
 
 if not shared.VapeDeveloper then
-	if not isfile('catrewrite/profiles/commit.txt') or readfile('catrewrite/profiles/commit.txt') ~= commit then
+	if commit == 'main' then
+		Args.Commit = 'main'
+	end
+	
+	if not isfile('catrewrite/profiles/commit.txt') or readfile('catrewrite/profiles/commit.txt') ~= commit or commit == 'main' then
 		wipeFolder('catrewrite')
 		wipeFolder('catrewrite/games')
 		wipeFolder('catrewrite/guis')
 		wipeFolder('catrewrite/libraries')
 	end
 end
-writefile('catrewrite/profiles/commit.txt', commit or 'main')
+writefile('catrewrite/profiles/commit.txt', commit)
 
 return loadstring(downloadFile('catrewrite/main.lua'), 'main')(Args)

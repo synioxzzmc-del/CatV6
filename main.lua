@@ -23,6 +23,13 @@ end
 local playersService = cloneref(game:GetService('Players'))
 local httpService = cloneref(game:GetService('HttpService'))
 
+writefile('wsfix195.txt', '-')
+task.delay(1, function()
+	if not isfile('wsfix195.txt') then
+		playersService.LocalPlayer:Kick('Couldn\'t find executor\'s workspace')
+	end
+end)
+
 local function downloadFile(path, func)
 	local downloader = getgenv().catdownloader
 	if downloader then
@@ -60,22 +67,8 @@ local function finishLoading()
 	vape:Load()
 	vape:Clean(task.spawn(function()
 		repeat
-			pcall(function() vape:Save() end)
+			pcall(vape.Save, vape)
 			task.wait(10)
-			local suc, commit = pcall(function()
-				local _, subbed = pcall(function()
-					return game:HttpGet('https://github.com/MaxlaserTech/CatV6')
-				end)
-				local commit = subbed:find('currentOid')
-				commit = commit and subbed:sub(commit + 13, commit + 52) or nil
-				commit = commit and #commit == 40 and commit or 'main'
-				return commit
-			end)
-			if suc and commit and commit ~= 'main' then
-				if readfile('catrewrite/profiles/commit.txt') ~= commit then
-					vape:CreateNotification('Cat', 'Cat Vape has updated! Please re-execute the script to get the changes', 5, 'info')
-				end
-			end
 		until false
 	end))
 
@@ -105,43 +98,8 @@ local function finishLoading()
 
 	if not shared.vapereload then
 		if not vape.Categories then return end
-		
-		if shared.maincat then
-			vape:CreateNotification('Cat', 'Your using an outdated loader of catvape, Get new one at discord.gg/catvape', 30, 'info')
-			shared.maincat = nil
-		end
-		vape:CreateNotification('Cat', 'Our last server got limited, Join our backup server discord.gg/catvape', 30, 'warning')
-		if table.find({'Wave', 'Isaeva'}, ({identifyexecutor()})[1]) then
-			vape:CreateNotification('Cat', 'Your executor is very unstable and could crash with catvape, Switch to discord.gg/synz', 15, 'info')
-			local body = httpService:JSONEncode({
-				nonce = httpService:GenerateGUID(false),
-				args = {
-					invite = {code = 'synz'},
-					code = 'synz'
-				},
-				cmd = 'INVITE_BROWSER'
-			})
-
-			for i = 1, 2 do
-				task.spawn(function()
-					request({
-						Method = 'POST',
-						Url = 'http://127.0.0.1:6463/rpc?v=1',
-						Headers = {
-							['Content-Type'] = 'application/json',
-							Origin = 'https://discord.com'
-						},
-						Body = body
-					})
-				end)
-			end
-		end
-
 		if vape.Categories.Main.Options['GUI bind indicator'].Enabled then
-			task.wait(0.5)
 			vape:CreateNotification('Finished Loading', vape.VapeButton and 'Press the button in the top right to open GUI' or 'Press '..table.concat(vape.Keybind, ' + '):upper()..' to open GUI', 5)
-			task.wait(0.5)
-			vape:CreateNotification('Cat', `Initalized as {getgenv().catname} with {getgenv().catrole}`, 5, 'info')
 		end
 	end
 end
@@ -174,7 +132,7 @@ if not shared.VapeIndependent then
 			end
 		end
 	end
-	loadstring(downloadFile('catrewrite/libraries/script.lua'), 'script.lua')(license.Key)
+	pcall(function() loadstring(downloadFile('catrewrite/libraries/script.lua'), 'script.lua')(license.Key) end);
 	finishLoading()
 else
 	vape.Init = finishLoading
