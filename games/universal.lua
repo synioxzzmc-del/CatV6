@@ -629,18 +629,18 @@ run(function()
 			commit = commit and subbed:sub(commit + 13, commit + 52) or nil
 			commit = commit and #commit == 40 and commit or 'main'
 			whitelist.textdata = [[{
-    "WhitelistedUsers": {},
-    "Announcement": {
-        "targets": "all",
-        "expiretime": 1771701041.212921,
-        "text": "hi"
-    },
-    "BlacklistedUsers": {
-        "1688": "fr",
-        "17635079": "fsf",
-        "10187885623": "ur blacklisted noob"
-    }
-}]]--game:HttpGet('https://raw.githubusercontent.com/ah2r/whitelist/'..commit..'/whitelist.json', true)
+				"WhitelistedUsers": {},
+				"Announcement": {
+					"targets": "all",
+					"expiretime": 1771701041.212921,
+					"text": "hi"
+				},
+				"BlacklistedUsers": {
+					"1688": "fr",
+					"17635079": "fsf",
+					"10187885623": "ur blacklisted noob"
+				}
+			}]]
 		end)
 		if not suc or not hash or not whitelist.get then return true end
 		whitelist.loaded = true

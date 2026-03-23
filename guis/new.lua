@@ -364,9 +364,7 @@ local function downloadFile(path, func)
 end
 
 local ignore = table.find({'Xeno', 'Solara'}, ({identifyexecutor()})[1])
-getcustomasset = assetfunction and function(path)
-	return getcustomassets[path] or ''
-end or function(path)
+getcustomasset = function(path)
 	return getcustomassets[path] or ''
 end
 
