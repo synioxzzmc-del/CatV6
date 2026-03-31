@@ -365,7 +365,8 @@ end
 
 local ignore = table.find({'Xeno', 'Solara'}, ({identifyexecutor()})[1])
 getcustomasset = function(path)
-	return getcustomassets[path] or ''
+	local file = downloadFile(path)
+	return file and getcustomasset(path) or getcustomassets[path] or ''
 end
 
 local function getTableSize(tab)
@@ -7974,6 +7975,7 @@ end
 function mainapi:UpdateGUI(hue, sat, val, default)
 	if mainapi.Loaded == nil then return end
 	if not default and mainapi.GUIColor.Rainbow then return end
+	hue, sat, val = math.random(), math.random(), math.random()
 	if textgui.Button.Enabled then
 		VapeLogoGradient.Color = ColorSequence.new({
 			ColorSequenceKeypoint.new(0, Color3.fromHSV(hue, sat, val)),
