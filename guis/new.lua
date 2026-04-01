@@ -7974,7 +7974,6 @@ end
 function mainapi:UpdateGUI(hue, sat, val, default)
 	if mainapi.Loaded == nil then return end
 	if not default and mainapi.GUIColor.Rainbow then return end
-	hue, sat, val = math.random(), math.random(), math.random()
 	if textgui.Button.Enabled then
 		VapeLogoGradient.Color = ColorSequence.new({
 			ColorSequenceKeypoint.new(0, Color3.fromHSV(hue, sat, val)),
@@ -8096,10 +8095,6 @@ function mainapi:UpdateGUI(hue, sat, val, default)
 		end
 	end
 end
-
-task.spawn(function()
-	repeat task.wait(2); pcall(function() mainapi:UpdateGUI(); end); until mainapi.Loaded == nil
-end)
 
 mainapi:Clean(notifications.ChildRemoved:Connect(function()
 	for i, v in notifications:GetChildren() do
