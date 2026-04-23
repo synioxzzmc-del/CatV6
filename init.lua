@@ -50,7 +50,11 @@ if not shared.VapeDeveloper then
 	commit = commit and #commit == 40 and commit or 'main'
 	if commit == 'main' or (isfile('catrewrite/profiles/commit.txt') and readfile('catrewrite/profiles/commit.txt') or '') ~= commit then
 		wipeFolder('catrewrite')
-		wipeFolder('catrewrite/games')
+		repeat
+			delfolder('games')
+			task.wait(0.1)
+		until not isfolder('catrewrite/games')
+		makefolder('games')
 		wipeFolder('catrewrite/guis')
 		wipeFolder('catrewrite/libraries')
 	end
