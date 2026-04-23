@@ -91,6 +91,7 @@ vape = loadstring(downloadFile('catrewrite/guis/'..gui..'.lua'), 'gui')()
 shared.vape = vape
 _G.vape = vape
 
+getgenv().canDebug = not table.find({'Xeno', 'Solara'}, ({identifyexecutor()})[1]) and debug.getconstants and debug.getproto and true or false
 if not shared.VapeIndependent then
 	loadstring(downloadFile('catrewrite/games/universal.lua'), 'universal')()
 	if isfile('catrewrite/games/'..game.PlaceId..'.lua') then
@@ -106,10 +107,8 @@ if not shared.VapeIndependent then
 			local callback = shared.VapeDeveloper and readfile or downloadFile
 			
 			for i, v in httpService:JSONDecode(callback("catrewrite/profiles/supported.json")) do
-				print('fr')
 				if found then break; end
 				if game.GameId == v.gameid then
-					print('yo')
 					for i2, v2 in v do
 						if typeof(v2) == 'table' and table.find(v2.Ids, game.PlaceId) then
 							found = true
