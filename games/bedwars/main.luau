@@ -1,3 +1,4 @@
+print("fuckass ragebait")
 local run = function(func)
 	func()
 end
@@ -89,6 +90,7 @@ local function addBlur(parent)
 end
 getgenv().addBlur = addBlur
 
+print('? w bait?>')
 local function collection(tags, module, customadd, customremove)
 	tags = typeof(tags) ~= 'table' and {tags} or tags
 	local objs, connections = {}, {}
@@ -722,7 +724,9 @@ run(function()
 	end
 	vape:Clean(entitylib.Events.LocalAdded:Connect(updateVelocity))
 end)
+warn('bro im done')
 entitylib.start()
+print('ts ragebait')
 
 local function downloadFile(path, func)
 	if not isfile(path) then
