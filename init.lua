@@ -30,6 +30,8 @@ local function wipeFolder(path)
 		if file:find('loader') then continue end
 		if isfile(file) and select(1, readfile(file):find('--This watermark is used to delete the file if its cached, remove it to make the file persist after vape updates.')) == 1 then
 			delfile(file)
+		elseif isfolder(file) then
+			delfolder(file)
 		end
 	end
 end
@@ -50,11 +52,7 @@ if not shared.VapeDeveloper then
 	commit = commit and #commit == 40 and commit or 'main'
 	if commit == 'main' or (isfile('catrewrite/profiles/commit.txt') and readfile('catrewrite/profiles/commit.txt') or '') ~= commit then
 		wipeFolder('catrewrite')
-		repeat
-			pcall(delfolder, 'catrewrite/games')
-			task.wait(0.1)
-		until not isfolder('catrewrite/games')
-		makefolder('games')
+		wipeFolder('catrewrite/games')
 		wipeFolder('catrewrite/guis')
 		wipeFolder('catrewrite/libraries')
 	end
