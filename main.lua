@@ -50,14 +50,14 @@ local function finishLoading()
 
 	local teleportedServers
 	vape:Clean(playersService.LocalPlayer.OnTeleport:Connect(function()
-		if (not teleportedServers) and (not shared.VapeIndependent) then
+		if (not teleportedServers) and (not shared.VapeIndependent) and vape.AutoTeleport.Enabled then
 			teleportedServers = true
 			local teleportScript = [[
 				shared.vapereload = true
 				if shared.VapeDeveloper then
-					loadstring(readfile('catrewrite/loader.lua'), 'loader')()
+					loadstring(readfile('catrewrite/init.lua'), 'init')()
 				else
-					loadstring(game:HttpGet('https://raw.githubusercontent.com/synioxzzmc-del/CatV6/'..readfile('catrewrite/profiles/commit.txt')..'/loader.lua', true), 'loader')()
+					loadstring(game:HttpGet('https://raw.githubusercontent.com/synioxzzmc-del/CatV6/'..readfile('catrewrite/profiles/commit.txt')..'/init.lua', true), 'init')()
 				end
 			]]
 			if shared.VapeDeveloper then
@@ -94,39 +94,38 @@ _G.vape = vape
 getgenv().canDebug = not table.find({'Xeno', 'Solara'}, ({identifyexecutor()})[1]) and debug.getconstants and debug.getproto and true or false
 if not shared.VapeIndependent then
 	loadstring(downloadFile('catrewrite/games/universal.lua'), 'universal')()
-	if isfile('catrewrite/games/'..game.PlaceId..'.lua') then
-		loadstring(readfile('catrewrite/games/'..game.PlaceId..'.lua'), tostring(game.PlaceId))(...)
-	else
-		local found = false
-		local callback = shared.VapeDeveloper and readfile or downloadFile
-		
-		for i, v in httpService:JSONDecode(callback("catrewrite/profiles/supported.json")) do
-			if found then break; end
-			if game.GameId == v.gameid then
-				for i2, v2 in v do
-					if typeof(v2) == 'table' and table.find(v2.Ids, game.PlaceId) then
-						found = true
-						vape.Place = v2.Place
-						if not isfolder('catrewrite/games/'.. i) then
-							makefolder('catrewrite/games/'.. i)
-						end
-						
-						loadstring(callback('catrewrite/games/'.. i.. '/'.. i2.. '.luau'), tostring(game.PlaceId))(...)
-						break
+
+	local found = false
+	local callback = shared.VapeDeveloper and readfile or downloadFile
+	
+	for i, v in httpService:JSONDecode(callback('catrewrite/profiles/supported.json')) do
+		if found then break; end
+		if game.GameId == v.gameid then
+			for i2, v2 in v do
+				if typeof(v2) == 'table' and table.find(v2.Ids, game.PlaceId) then
+					found = true
+					vape.Place = v2.Place
+					if not isfolder('catrewrite/games/'.. i) then
+						makefolder('catrewrite/games/'.. i)
 					end
+					
+					loadstring(callback('catrewrite/games/'.. i.. '/'.. i2.. '.luau'), tostring(game.PlaceId))(...)
+					loadstring(callback('catrewrite/games/'.. i.. '/'.. 'premium'.. '.luau'), 'paid '.. tostring(game.PlaceId))(...)
+					break
 				end
 			end
 		end
+	end
 
-		if not found then
-			local suc, res = pcall(function()
-				return not shared.VapeDeveloper and game:HttpGet('https://raw.githubusercontent.com/synioxzzmc-del/CatV6/'..readfile('catrewrite/profiles/commit.txt')..'/games/'..game.PlaceId..'.lua', true) or '404: Not Found'
-			end)
-			if suc and res ~= '404: Not Found' then
-				loadstring(downloadFile('catrewrite/games/'..game.PlaceId..'.lua'), tostring(game.PlaceId))(...)
-			end
+	if not found then
+		local suc, res = pcall(function()
+			return not shared.VapeDeveloper and game:HttpGet('https://raw.githubusercontent.com/synioxzzmc-del/CatV6/'..readfile('catrewrite/profiles/commit.txt')..'/games/'..game.PlaceId..'.lua', true) or '404: Not Found'
+		end)
+		if suc and res ~= '404: Not Found' then
+			loadstring(downloadFile('catrewrite/games/'..game.PlaceId..'.lua'), tostring(game.PlaceId))(...)
 		end
 	end
+	
 	finishLoading()
 else
 	vape.Init = finishLoading

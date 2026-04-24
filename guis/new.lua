@@ -20,7 +20,7 @@ local mainapi = {
 	Scale = {Value = 1},
 	ThreadFix = nil,
 	ToggleNotifications = {},
-	Version = ... or 'kitty',
+	Version = '6.00',
 	Windows = {}
 }
 
@@ -3632,7 +3632,7 @@ function mainapi:CreateGUI()
 
 		task.spawn(function()
 			tooltip.Text = 'Copied!'
-			setclipboard('https://discord.gg/vxpe')
+			setclipboard('https://discord.gg/catvape')
 		end)
 	end)
 	settingsbutton.MouseEnter:Connect(function()
@@ -4958,11 +4958,22 @@ function mainapi:CreateSearch()
 	local xoffset = inputService.TouchEnabled and 0.3 or 0.5
 	local searchbkg = Instance.new('Frame')
 	searchbkg.Name = 'Search'
-	searchbkg.Size = UDim2.fromOffset(220, 37)
+	searchbkg.Size = UDim2.fromOffset(240, 37)
 	searchbkg.Position = UDim2.new(xoffset, 0, 0, 13)
 	searchbkg.AnchorPoint = Vector2.new(xoffset, 0)
 	searchbkg.BackgroundColor3 = color.Dark(uipallet.Main, 0.02)
 	searchbkg.Parent = clickgui
+	local searchlegit = Instance.new('TextLabel')
+	searchlegit.Size = UDim2.new(0.7, 1, 0, 37)
+	searchlegit.Position = UDim2.new(0.5, 4, 0, -1)
+	searchlegit.BackgroundTransparency = 1
+	searchlegit.FontFace = uipallet.Font
+	searchlegit.Text = 'Legit'
+	searchlegit.AnchorPoint = Vector2.new(0.5, 0)
+	searchlegit.TextSize = 14
+	searchlegit.Parent = searchbkg
+	searchlegit.TextXAlignment = Enum.TextXAlignment.Left
+	searchlegit.TextColor3 = Color3.new(1, 1, 1)
 	local searchicon = Instance.new('ImageLabel')
 	searchicon.Name = 'Icon'
 	searchicon.Size = UDim2.fromOffset(14, 14)
@@ -4981,15 +4992,14 @@ function mainapi:CreateSearch()
 	local legitdivider = Instance.new('Frame')
 	legitdivider.Name = 'LegitDivider'
 	legitdivider.Size = UDim2.fromOffset(2, 12)
-	legitdivider.Position = UDim2.fromOffset(43, 13)
+	legitdivider.Position = UDim2.fromOffset(76, 13)
 	legitdivider.BackgroundColor3 = color.Light(uipallet.Main, 0.14)
 	legitdivider.BorderSizePixel = 0
 	legitdivider.Parent = searchbkg
 	addBlur(searchbkg)
 	addCorner(searchbkg)
+	warn('what?')
 	local search = Instance.new('TextBox')
-	search.Size = UDim2.new(1, -50, 0, 37)
-	search.Position = UDim2.fromOffset(50, 0)
 	search.BackgroundTransparency = 1
 	search.Text = ''
 	search.PlaceholderText = ''
@@ -4999,6 +5009,10 @@ function mainapi:CreateSearch()
 	search.FontFace = uipallet.Font
 	search.ClearTextOnFocus = false
 	search.Parent = searchbkg
+	task.delay(1, function()
+		search.Size = UDim2.new(1, -100, 0, 37)
+		search.Position = UDim2.fromOffset(85, 0)
+	end)
 	local children = Instance.new('ScrollingFrame')
 	children.Name = 'Children'
 	children.Size = UDim2.new(1, 0, 1, -37)
@@ -5045,6 +5059,8 @@ function mainapi:CreateSearch()
 				v:Destroy()
 			end
 		end
+		search.Size = UDim2.new(1, -100, 0, 37)
+		search.Position = UDim2.fromOffset(85, 0)
 		if search.Text == '' then return end
 
 		for i, v in self.Modules do
@@ -5056,6 +5072,7 @@ function mainapi:CreateSearch()
 						v.Visible = false
 					end
 				end
+				button.Size = UDim2.fromOffset(240, 40)
 				button.Bind:Destroy()
 				button.Indicators.MATCHED.Visible = hasAlias
 				button.MouseButton1Click:Connect(function()
@@ -5113,7 +5130,7 @@ function mainapi:CreateSearch()
 			setthreadidentity(8)
 		end
 		children.CanvasSize = UDim2.fromOffset(0, windowlist.AbsoluteContentSize.Y / scale.Scale)
-		searchbkg.Size = UDim2.fromOffset(220, math.min(37 + windowlist.AbsoluteContentSize.Y / scale.Scale, 437))
+		searchbkg.Size = UDim2.fromOffset(240, math.min(37 + windowlist.AbsoluteContentSize.Y / scale.Scale, 437))
 	end)
 
 	self.Legit.Icon = legiticon
@@ -6731,7 +6748,7 @@ gui.DisplayOrder = 9999999
 gui.ZIndexBehavior = Enum.ZIndexBehavior.Global
 gui.IgnoreGuiInset = true
 gui.OnTopOfCoreBlur = true
-if mainapi.ThreadFix then
+if false then
 	gui.Parent = cloneref(game:GetService('CoreGui'))--(gethui and gethui()) or cloneref(game:GetService('CoreGui'))
 else
 	gui.Parent = lplr.PlayerGui
@@ -6753,7 +6770,7 @@ local scarcitybanner = Instance.new('TextLabel')
 scarcitybanner.Size = UDim2.fromScale(1, 0.02)
 scarcitybanner.Position = UDim2.fromScale(0, 0.96)
 scarcitybanner.BackgroundTransparency = 1
-scarcitybanner.Text = 'We have a new discord server! Join discord.gg/vxpe.'
+scarcitybanner.Text = 'We have a new new new discord server! Join discord.gg/catvape.'
 scarcitybanner.TextSize = 22
 scarcitybanner.TextColor3 = Color3.new(1, 1, 1)
 scarcitybanner.TextStrokeTransparency = 0.5
@@ -6817,7 +6834,7 @@ task.spawn(function()
 	repeat
 		task.wait()
 	until mainapi.Loaded
-	loadingText.Text = 'Thank you for choosing catrewrite vape!\nScript is fully loaded'
+	loadingText.Text = 'Thank you for choosing Cat Vape!\nScript is fully loaded'
 end)
 
 mainapi:Clean(gui:GetPropertyChangedSignal('AbsoluteSize'):Connect(function()

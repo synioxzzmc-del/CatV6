@@ -1,3 +1,4 @@
+shared.catdata = {Key = script_key or 'none'}
 local isfile = isfile or function(file)
 	local suc, res = pcall(function()
 		return readfile(file)
