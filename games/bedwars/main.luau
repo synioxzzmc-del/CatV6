@@ -2020,6 +2020,90 @@ run(function()
 	})
 	TargetCheck = Velocity:CreateToggle({Name = 'Only when targeting'})
 end)
+
+run(function()
+	local KnockbackDisplace
+	local KBDirection
+	local originalApplyKnockback
+	local hooked = false
+	local _cachedKnockbackUtil = nil
+	local function findKnockbackUtil()
+		if _cachedKnockbackUtil and rawget(_cachedKnockbackUtil, 'applyKnockback') then
+			return _cachedKnockbackUtil
+		end
+		for _, v in getgc(true) do
+			if type(v) == 'table' and rawget(v, 'applyKnockback') and rawget(v, 'getDirection') and rawget(v, 'applyKnockbackDirection') then
+				_cachedKnockbackUtil = v
+				return v
+			end
+		end
+	end
+	KnockbackDisplace = vape.Categories.Combat:CreateModule({
+		Name = 'KnockbackDisplace',
+		Function = function(callback)
+			if callback then
+				local util = findKnockbackUtil()
+				if not util then
+					notif('KnockbackDisplace', 'Failed to hook knockback!', 3)
+					KnockbackDisplace:Toggle()
+					return
+				end
+				originalApplyKnockback = util.applyKnockback
+				util.applyKnockback = function(hrp, mass, sourcePos, modifier)
+					local dir = KBDirection.Value
+					if dir == 'Default' then
+						return originalApplyKnockback(hrp, mass, sourcePos, modifier)
+					elseif dir == 'Void' then
+						hrp:ApplyImpulse(Vector3.new(0, -mass * 60, 0))
+						return
+					elseif dir == 'Up' then
+						hrp:ApplyImpulse(Vector3.new(0, mass * 120, 0))
+						return
+					elseif dir == 'Left' then
+						local hrpPos = hrp.Position
+						local fakeSource = hrpPos + hrp.CFrame.RightVector * 10
+						return originalApplyKnockback(hrp, mass, fakeSource, modifier)
+					elseif dir == 'Right' then
+						local hrpPos = hrp.Position
+						local fakeSource = hrpPos - hrp.CFrame.RightVector * 10
+						return originalApplyKnockback(hrp, mass, fakeSource, modifier)
+					elseif dir == 'Reverse' then
+						local hrpPos = hrp.Position
+						local fakeSource
+						if sourcePos then
+							fakeSource = Vector3.new(2 * hrpPos.X - sourcePos.X, sourcePos.Y, 2 * hrpPos.Z - sourcePos.Z)
+						end
+						return originalApplyKnockback(hrp, mass, fakeSource or sourcePos, modifier)
+					elseif dir == 'Backwards' then
+						local hrpPos = hrp.Position
+						local fakeSource
+						if sourcePos then
+							fakeSource = Vector3.new(2 * hrpPos.X - sourcePos.X, sourcePos.Y, 2 * hrpPos.Z - sourcePos.Z)
+						end
+						return originalApplyKnockback(hrp, mass, fakeSource or sourcePos, modifier)
+					end
+				end
+				hooked = true
+			else
+				if hooked then
+					local util = findKnockbackUtil()
+					if util and originalApplyKnockback then
+						util.applyKnockback = originalApplyKnockback
+					end
+					hooked = false
+					originalApplyKnockback = nil
+				end
+			end
+		end,
+		Tooltip = 'Redirect your knockback direction'
+	})
+	KBDirection = KnockbackDisplace:CreateDropdown({
+		Name = 'KBDirection',
+		List = {'Default', 'Backwards', 'Up', 'Left', 'Right', 'Reverse'},
+		Default = 'Void',
+		Tooltip = 'Choose which direction to redirect your knockback'
+	})
+end)
 	
 local AntiFallDirection
 run(function()
